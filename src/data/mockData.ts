@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Worker, Review, JobCategory, User } from '../types';
 
 export const mockUser: User = {

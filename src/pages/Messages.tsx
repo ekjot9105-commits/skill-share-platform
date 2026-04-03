@@ -16,7 +16,7 @@ export function Messages() {
   const [draft, setDraft] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [targetUserId, setTargetUserId] = useState<number | null>(initTargetId ? Number(initTargetId) : null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [, setSocket] = useState<Socket | null>(null);
   
   // Mobile UI toggle state
   const [showContacts, setShowContacts] = useState(!initTargetId);

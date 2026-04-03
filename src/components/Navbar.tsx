@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
-import { Home, Search, Calendar, MessageSquare, Wallet, User as UserIcon } from 'lucide-react';
+import { Home, Search, Calendar, MessageSquare, Wallet } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../store/useAuthStore';
 import { useTranslation } from 'react-i18next';

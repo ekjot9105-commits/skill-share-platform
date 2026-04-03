@@ -37,6 +37,7 @@ export interface User {
   role: 'client' | 'worker';
   wallet_balance: number;
   language: string;
+  avatar_url?: string;
 }
 
 export interface Booking {

@@ -261,7 +261,7 @@ app.post('/api/messages', upload.single('video'), (req, res) => {
     );
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log('SkillShare Backend running with WebSockets on http://localhost:' + PORT);
+    console.log('SkillShare Backend running with WebSockets on port ' + PORT);
 });
