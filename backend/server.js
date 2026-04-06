@@ -58,42 +58,60 @@ app.post('/api/login', (req, res) => {
 // 2. Auth: Register
 app.post('/api/register', (req, res) => {
     const { name, email, password, role, workerData } = req.body;
-    db.run(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-        [name, email, password, role],
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            
-            const newUserId = this.lastID;
-            
-            if (role === 'worker' && workerData) {
-                const deterministicAvatar = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+    
+    db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+        
+        db.run(
+            'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+            [name, email, password, role],
+            function(err) {
+                if (err) {
+                    db.run('ROLLBACK');
+                    return res.status(500).json({ error: err.message });
+                }
                 
-                // Insert worker details
-                db.run(
-                    'INSERT INTO workers (user_id, category, hourly_rate, experience_level, latitude, longitude, bio, avatar_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                    [newUserId, workerData.category, workerData.hourly_rate, workerData.experience_level, workerData.latitude, workerData.longitude, workerData.bio, deterministicAvatar],
-                    (err) => {
-                        if (err) console.error(err);
-                        // Insert skills
-                        if (workerData.skills && Array.isArray(workerData.skills)) {
-                            workerData.skills.forEach(skill => {
-                                db.run('INSERT INTO worker_skills (worker_id, skill) VALUES (?, ?)', [newUserId, skill]);
-                            });
+                const newUserId = this.lastID;
+                
+                if (role === 'worker' && workerData) {
+                    const deterministicAvatar = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+                    
+                    db.run(
+                        'INSERT INTO workers (user_id, category, hourly_rate, experience_level, latitude, longitude, bio, avatar_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                        [newUserId, workerData.category, workerData.hourly_rate, workerData.experience_level, workerData.latitude, workerData.longitude, workerData.bio, deterministicAvatar],
+                        (err) => {
+                            if (err) {
+                                db.run('ROLLBACK');
+                                return res.status(500).json({ error: err.message });
+                            }
+                            
+                            if (workerData.skills && Array.isArray(workerData.skills)) {
+                                const stmt = db.prepare('INSERT INTO worker_skills (worker_id, skill) VALUES (?, ?)');
+                                workerData.skills.forEach(skill => {
+                                    stmt.run([newUserId, skill]);
+                                });
+                                stmt.finalize();
+                            }
+                            
+                            db.run('COMMIT');
+                            res.status(201).json({ id: newUserId, name, email, role, wallet_balance: 0 });
                         }
-                    }
-                );
+                    );
+                } else {
+                    db.run('COMMIT');
+                    res.status(201).json({ id: newUserId, name, email, role, wallet_balance: 0 });
+                }
             }
-            res.status(201).json({ id: newUserId, name, email, role, wallet_balance: 0 });
-        }
-    );
+        );
+    });
 });
 
 // 3. Get Workers (Search & Filters)
 app.get('/api/workers', (req, res) => {
     const query = `
         SELECT u.id, u.name, w.category, w.hourly_rate, w.experience_level, w.latitude, w.longitude, w.is_verified, w.avatar_url, w.video_url, w.bio,
-        COALESCE(AVG(r.rating), 0) as rating, COUNT(r.id) as reviewsCount
+        COALESCE(AVG(r.rating), 0) as rating, COUNT(r.id) as reviewsCount,
+        (SELECT GROUP_CONCAT(skill) FROM worker_skills WHERE worker_id = u.id) as skills_list
         FROM users u
         JOIN workers w ON u.id = w.user_id
         LEFT JOIN reviews r ON w.user_id = r.worker_id
@@ -103,17 +121,12 @@ app.get('/api/workers', (req, res) => {
     db.all(query, (err, workers) => {
         if (err) return res.status(500).json({ error: err.message });
         
-        // Fetch skills for each worker
-        db.all('SELECT worker_id, skill FROM worker_skills', (err, allSkills) => {
-            if (err) return res.status(500).json({ error: err.message });
-            
-            const workersWithSkills = workers.map(w => {
-                const wSkills = allSkills.filter(s => s.worker_id === w.id).map(s => s.skill);
-                // Also calculate dummy distance for prototype based on a fixed random point if lat/lng missing
-                return { ...w, skills: wSkills, distance: (Math.random() * 10).toFixed(1) };
-            });
-            res.json(workersWithSkills);
-        });
+        const workersWithSkills = workers.map(w => ({
+            ...w,
+            skills: w.skills_list ? w.skills_list.split(',') : [],
+            distance: (Math.random() * 10).toFixed(1)
+        }));
+        res.json(workersWithSkills);
     });
 });
 

@@ -25,7 +25,10 @@ export function Messages() {
 
   useEffect(() => {
     if (!user) return;
-    const newSocket = io('http://localhost:3000');
+    
+    // Use the same base URL as the API for WebSocket connection
+    const socketUrl = api.defaults.baseURL?.split('/api')[0] || 'http://localhost:3000';
+    const newSocket = io(socketUrl);
     setSocket(newSocket);
     
     newSocket.on('connect', () => {

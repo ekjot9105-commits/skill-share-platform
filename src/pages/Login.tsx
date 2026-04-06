@@ -8,17 +8,22 @@ export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const login = useAuthStore(state => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
     try {
       const res = await api.post('/login', { email, password });
       login(res.data);
       navigate(res.data.role === 'worker' ? '/worker-dashboard' : '/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,6 +41,7 @@ export function Login() {
             type="email" 
             className="w-full border bg-slate-50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary" 
             value={email} onChange={e => setEmail(e.target.value)} required 
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -44,10 +50,20 @@ export function Login() {
             type="password" 
             className="w-full border bg-slate-50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary" 
             value={password} onChange={e => setPassword(e.target.value)} required 
+            disabled={isLoading}
           />
         </div>
-        <button type="submit" className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 transition shadow-md mt-4">
-          Login
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 transition shadow-md mt-4 flex items-center justify-center gap-2"
+        >
+          {isLoading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              Logging in...
+            </>
+          ) : 'Login'}
         </button>
       </form>
       
