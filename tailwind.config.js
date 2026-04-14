@@ -18,11 +18,11 @@ export default {
         },
         background: {
           light: "#fffcf5", // Warm beige
-          dark: "#0f172a",
+          dark: "#020617", // Midnight Indigo
         },
         surface: {
           light: "#ffffff",
-          dark: "#1e293b",
+          dark: "#0f172a", // Deep Slate
         }
       }
     },

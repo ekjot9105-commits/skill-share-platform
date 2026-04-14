@@ -27,7 +27,13 @@ export function Messages() {
     if (!user) return;
     
     // Use the same base URL as the API for WebSocket connection
-    const socketUrl = api.defaults.baseURL?.split('/api')[0] || 'http://localhost:3000';
+    let socketUrl = api.defaults.baseURL?.split('/api')[0] || '';
+    
+    // If socketUrl is relative (like '/api' -> ''), use current window location
+    if (!socketUrl || !socketUrl.startsWith('http')) {
+        socketUrl = window.location.origin;
+    }
+    
     const newSocket = io(socketUrl);
     setSocket(newSocket);
     
