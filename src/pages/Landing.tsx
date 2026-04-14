@@ -60,12 +60,12 @@ export function LandingPage() {
                 {i18n.language === 'en' ? 'Cross-Cultural Skill Exchange' : 'संस्कृतियों में कौशल का आदान-प्रदान'}
              </motion.div>
 
-             <motion.h1 initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} transition={{delay: 0.1}} className="text-6xl md:text-7xl font-black text-[#1e293b] leading-[1.1] tracking-tight">
+             <motion.h1 initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} transition={{delay: 0.1}} className="text-6xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight transition-colors">
                 {i18n.language === 'en' ? (
                    <>Share Your <span className="relative">Skills<svg className="absolute w-full h-4 -bottom-1 left-0 text-amber-400" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 0" stroke="currentColor" strokeWidth="4" fill="none"/></svg></span>, <br/>Grow Together</>
                 ) : (
-                   <>अपना <span className="text-[#d97706] relative">कौशल</span> साझा <br/>करें, साथ बढ़ें
-                     <svg className="absolute w-32 h-4 -bottom-1 left-32 text-[#d97706]/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 0" stroke="currentColor" strokeWidth="4" fill="none"/></svg>
+                   <>अपना <span className="text-amber-600 dark:text-amber-400 relative">कौशल</span> साझा <br/>करें, साथ बढ़ें
+                     <svg className="absolute w-32 h-4 -bottom-1 left-32 text-amber-600/40 dark:text-amber-400/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 0" stroke="currentColor" strokeWidth="4" fill="none"/></svg>
                    </>
                 )}
              </motion.h1>
@@ -77,10 +77,10 @@ export function LandingPage() {
              </motion.p>
 
              <motion.div initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} transition={{delay: 0.3}} className="flex flex-wrap items-center gap-4 pt-2">
-                <Link to="/search" className="bg-[#f59e0b] hover:bg-amber-500 text-white px-8 py-3.5 rounded-xl font-bold tracking-wide shadow-xl shadow-amber-500/20 transition-all flex items-center gap-2">
+                <Link to="/search" className="bg-primary hover:bg-amber-500 text-white px-8 py-3.5 rounded-xl font-bold tracking-wide shadow-xl shadow-amber-500/20 transition-all flex items-center gap-2">
                    {i18n.language === 'en' ? 'Find Skills' : 'कौशल खोजें'}
                 </Link>
-                <Link to="/signup?role=worker" className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-8 py-3.5 rounded-xl font-bold tracking-wide shadow-lg shadow-slate-200/50 transition-all flex items-center gap-2">
+                <Link to="/signup?role=worker" className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-3.5 rounded-xl font-bold tracking-wide shadow-lg shadow-slate-200/50 dark:shadow-none transition-all flex items-center gap-2">
                    {i18n.language === 'en' ? 'Provide Skills' : 'कौशल प्रदान करें'}
                 </Link>
              </motion.div>
@@ -109,7 +109,7 @@ export function LandingPage() {
                initial={{opacity: 0, scale: 0.9, x: 50, y: -20}} 
                animate={{opacity: 1, scale: 1, x: 0, y: 0}} 
                transition={{delay: 0.4, type: 'spring'}}
-               className="absolute top-4 right-10 z-20 bg-white/95 backdrop-blur-xl p-6 rounded-[2rem] shadow-2xl border border-white w-80 transform rotate-1"
+               className="absolute top-4 right-10 z-20 bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl p-6 rounded-[2rem] shadow-2xl border border-white dark:border-white/10 w-80 transform rotate-1 transition-all"
              >
                 <div className="flex items-center gap-4 mb-5">
                    <div className="w-14 h-14 rounded-full bg-orange-100 border-2 border-white shadow-sm flex flex-col items-center justify-center text-xl overflow-hidden">
