@@ -10,8 +10,8 @@ export function Community() {
     <div className="max-w-6xl mx-auto p-6 md:p-12 mb-20 animate-fade-in relative z-10">
       <div className="mb-8"><BackButton /></div>
       <div className="text-center max-w-3xl mx-auto mb-16">
-         <h1 className="text-4xl md:text-5xl md:leading-tight font-black text-slate-900 mb-6 uppercase tracking-tight">SkillBridge Community</h1>
-         <p className="text-xl text-slate-500 font-medium">Join 48,000+ professionals building relationships and sharing knowledge across 80 countries.</p>
+         <h1 className="text-4xl md:text-5xl md:leading-tight font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight transition-colors">SkillBridge Community</h1>
+         <p className="text-xl text-slate-500 dark:text-slate-400 font-medium transition-colors">Join 48,000+ professionals building relationships and sharing knowledge across 80 countries.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
@@ -30,11 +30,11 @@ export function Community() {
          </motion.div>
       </div>
       
-      <div className="bg-white p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] text-center relative overflow-hidden">
-         <div className="absolute top-0 left-0 w-64 h-64 bg-green-100 rounded-full -ml-32 -mt-32 blur-3xl opacity-50"></div>
-         <Award className="w-16 h-16 text-green-500 mx-auto mb-6 relative z-10" />
-         <h2 className="text-3xl font-black text-slate-900 mb-4 relative z-10">Elite Worker Program</h2>
-         <p className="text-slate-500 max-w-2xl mx-auto mb-8 relative z-10">Consistently deliver 5-star service and unlock our Elite status, giving you priority search ranking, reduced platform fees, and dedicated support.</p>
+      <div className="bg-white dark:bg-surface-dark p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] text-center relative overflow-hidden transition-colors">
+         <div className="absolute top-0 left-0 w-64 h-64 bg-green-100 dark:bg-green-900/20 rounded-full -ml-32 -mt-32 blur-3xl opacity-50 transition-colors"></div>
+         <Award className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-6 relative z-10 transition-colors" />
+         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4 relative z-10 transition-colors">Elite Worker Program</h2>
+         <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8 relative z-10 transition-colors">Consistently deliver 5-star service and unlock our Elite status, giving you priority search ranking, reduced platform fees, and dedicated support.</p>
       </div>
 
     </div>

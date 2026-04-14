@@ -35,13 +35,13 @@ export function SearchPage() {
   // Helper to map categories to vibrant card styles
   const getCategoryStyle = (category: string) => {
     const cat = category.toLowerCase();
-    if (cat.includes('tech') || cat.includes('web') || cat.includes('dev')) return { bg: 'bg-[#bee3f8]', text: 'text-blue-600', icon: '💻', tag: 'TECHNOLOGY' };
-    if (cat.includes('design') || cat.includes('art')) return { bg: 'bg-[#fed7d7]', text: 'text-red-500', icon: '🎨', tag: 'DESIGN' };
-    if (cat.includes('music') || cat.includes('piano') || cat.includes('tutor')) return { bg: 'bg-[#e9d8fd]', text: 'text-purple-600', icon: '🎵', tag: 'MUSIC / EDU' };
-    if (cat.includes('plumb') || cat.includes('elect') || cat.includes('clean') || cat.includes('carpentry')) return { bg: 'bg-[#c6f6d5]', text: 'text-green-600', icon: '🔧', tag: 'MAINTENANCE' };
-    if (cat.includes('lang') || cat.includes('speak') || cat.includes('coach')) return { bg: 'bg-[#fed7e2]', text: 'text-pink-600', icon: '🗣️', tag: 'LANGUAGE' };
-    if (cat.includes('photo') || cat.includes('video')) return { bg: 'bg-[#e2e8f0]', text: 'text-slate-600', icon: '📸', tag: 'MEDIA' };
-    return { bg: 'bg-[#fefcbf]', text: 'text-yellow-600', icon: '✨', tag: 'OTHER' };
+    if (cat.includes('tech') || cat.includes('web') || cat.includes('dev')) return { bg: 'bg-[#bee3f8] dark:bg-blue-900/40', text: 'text-blue-600 dark:text-blue-300', icon: '💻', tag: 'TECHNOLOGY' };
+    if (cat.includes('design') || cat.includes('art')) return { bg: 'bg-[#fed7d7] dark:bg-red-900/40', text: 'text-red-500 dark:text-red-300', icon: '🎨', tag: 'DESIGN' };
+    if (cat.includes('music') || cat.includes('piano') || cat.includes('tutor')) return { bg: 'bg-[#e9d8fd] dark:bg-purple-900/40', text: 'text-purple-600 dark:text-purple-300', icon: '🎵', tag: 'MUSIC / EDU' };
+    if (cat.includes('plumb') || cat.includes('elect') || cat.includes('clean') || cat.includes('carpentry')) return { bg: 'bg-[#c6f6d5] dark:bg-green-900/40', text: 'text-green-600 dark:text-green-300', icon: '🔧', tag: 'MAINTENANCE' };
+    if (cat.includes('lang') || cat.includes('speak') || cat.includes('coach')) return { bg: 'bg-[#fed7e2] dark:bg-pink-900/40', text: 'text-pink-600 dark:text-pink-300', icon: '🗣️', tag: 'LANGUAGE' };
+    if (cat.includes('photo') || cat.includes('video')) return { bg: 'bg-[#e2e8f0] dark:bg-slate-800/60', text: 'text-slate-600 dark:text-slate-300', icon: '📸', tag: 'MEDIA' };
+    return { bg: 'bg-[#fefcbf] dark:bg-yellow-900/40', text: 'text-yellow-600 dark:text-yellow-300', icon: '✨', tag: 'OTHER' };
   };
 
   let filteredWorkers = workers.filter(w => {
@@ -88,11 +88,11 @@ export function SearchPage() {
 
             {/* Filter Pills */}
             <div className="flex flex-wrap items-center gap-3 mt-8">
-               <button onClick={() => setActiveFilter('All')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'All' ? 'bg-[#1e293b] text-white' : 'bg-white text-slate-600 border border-slate-200 shadow-sm'}`}>All Skills</button>
-               <button onClick={() => setActiveFilter('Money')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 bg-white text-slate-600 border border-slate-200 shadow-sm hover:border-amber-500 ${activeFilter === 'Money' ? 'border-amber-500 ring-2 ring-amber-100' : ''}`}><span className="text-amber-500">💰</span> For Money</button>
-               <button onClick={() => setActiveFilter('Barter')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 bg-white text-slate-600 border border-slate-200 shadow-sm hover:border-blue-500 ${activeFilter === 'Barter' ? 'border-blue-500 ring-2 ring-blue-100' : ''}`}><RefreshCcw className="w-4 h-4 text-blue-500"/> Barter Only</button>
-               <button onClick={() => setActiveFilter('Local')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 bg-white text-slate-600 border border-slate-200 shadow-sm hover:border-pink-500 ${activeFilter === 'Local' ? 'border-pink-500 ring-2 ring-pink-100' : ''}`}><MapPin className="w-4 h-4 text-pink-500"/> Local</button>
-               <button onClick={() => setActiveFilter('Online')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 bg-white text-slate-600 border border-slate-200 shadow-sm hover:border-cyan-500 ${activeFilter === 'Online' ? 'border-cyan-500 ring-2 ring-cyan-100' : ''}`}><Globe className="w-4 h-4 text-cyan-500"/> Online</button>
+               <button onClick={() => setActiveFilter('All')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'All' ? 'bg-[#1e293b] dark:bg-primary-dark text-white' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 shadow-sm'}`}>All Skills</button>
+               <button onClick={() => setActiveFilter('Money')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'Money' ? 'bg-white dark:bg-surface-dark border-amber-500 ring-2 ring-amber-100 dark:ring-amber-900/30' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'} shadow-sm hover:border-amber-500`}><span className="text-amber-500">💰</span> For Money</button>
+               <button onClick={() => setActiveFilter('Barter')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'Barter' ? 'bg-white dark:bg-surface-dark border-blue-500 ring-2 ring-blue-100 dark:ring-blue-900/30' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'} shadow-sm hover:border-blue-500`}><RefreshCcw className="w-4 h-4 text-blue-500"/> Barter Only</button>
+               <button onClick={() => setActiveFilter('Local')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'Local' ? 'bg-white dark:bg-surface-dark border-pink-500 ring-2 ring-pink-100 dark:ring-pink-900/30' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'} shadow-sm hover:border-pink-500`}><MapPin className="w-4 h-4 text-pink-500"/> Local</button>
+               <button onClick={() => setActiveFilter('Online')} className={`px-5 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 ${activeFilter === 'Online' ? 'bg-white dark:bg-surface-dark border-cyan-500 ring-2 ring-cyan-100 dark:ring-cyan-900/30' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'} shadow-sm hover:border-cyan-500`}><Globe className="w-4 h-4 text-cyan-500"/> Online</button>
             </div>
         </div>
       </div>
