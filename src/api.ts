@@ -6,11 +6,11 @@ function normalizeBaseUrl(url: string): string {
     return url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.');
-const fallbackUrl = isLocal ? `http://${window.location.hostname}:5001/api` : 'https://skill-share-platform.onrender.com/api';
+const isLocal = import.meta.env.DEV;
+const fallbackUrl = isLocal ? '/api' : 'https://skill-share-platform.onrender.com/api';
 
 const api = axios.create({
-    // Use env in all environments; fallback keeps local dev working and avoids localhost in deployed builds.
+    // Use proxy in local dev (bypasses Windows firewall), fallback to Render in production
     baseURL: normalizeBaseUrl(configuredBaseUrl || fallbackUrl),
     headers: {
         'Content-Type': 'application/json'

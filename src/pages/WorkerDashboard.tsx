@@ -5,7 +5,6 @@ import { BackButton } from '../components/BackButton';
 import { CheckCircle, XCircle, Settings, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DollarSign, Briefcase, Star as StarIcon } from 'lucide-react';
-import { BackButton } from '../components/BackButton';
 import { useTranslation } from 'react-i18next';
 
 export function WorkerDashboard() {
