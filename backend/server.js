@@ -73,21 +73,22 @@ app.post('/api/register', (req, res) => {
                 
                 const newUserId = this.lastID;
                 
-                if (role === 'worker' && workerData) {
+                if (role === 'worker') {
+                    const wData = workerData || { category: 'New Tradesperson', hourly_rate: 15, experience_level: 'Beginner', latitude: 34.05, longitude: -118.24, bio: 'Ready to offer my skills!' };
                     const deterministicAvatar = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
                     
                     db.run(
                         'INSERT INTO workers (user_id, category, hourly_rate, experience_level, latitude, longitude, bio, avatar_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                        [newUserId, workerData.category, workerData.hourly_rate, workerData.experience_level, workerData.latitude, workerData.longitude, workerData.bio, deterministicAvatar],
+                        [newUserId, wData.category, wData.hourly_rate, wData.experience_level, wData.latitude, wData.longitude, wData.bio, deterministicAvatar],
                         (err) => {
                             if (err) {
                                 db.run('ROLLBACK');
                                 return res.status(500).json({ error: err.message });
                             }
                             
-                            if (workerData.skills && Array.isArray(workerData.skills)) {
+                            if (wData.skills && Array.isArray(wData.skills)) {
                                 const stmt = db.prepare('INSERT INTO worker_skills (worker_id, skill) VALUES (?, ?)');
-                                workerData.skills.forEach(skill => {
+                                wData.skills.forEach(skill => {
                                     stmt.run([newUserId, skill]);
                                 });
                                 stmt.finalize();

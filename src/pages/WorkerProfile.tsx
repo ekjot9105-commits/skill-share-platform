@@ -14,6 +14,7 @@ export function WorkerProfilePage() {
   const [worker, setWorker] = useState<WorkerProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [bookingDate, setBookingDate] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'skill_exchange'>('wallet');
   const [bookingLoading, setBookingLoading] = useState(false);
   const { t } = useTranslation();
   const user = useAuthStore(state => state.user);
@@ -34,7 +35,7 @@ export function WorkerProfilePage() {
         worker_id: id, 
         job_date: bookingDate,
         total_price: worker?.hourly_rate || 0,
-        payment_method: 'wallet' 
+        payment_method: paymentMethod 
       });
       alert('Booking requested successfully!');
       navigate('/bookings');
@@ -149,6 +150,21 @@ export function WorkerProfilePage() {
                          className="w-full bg-transparent font-bold text-white outline-none caret-primary" 
                        />
                     </div>
+                 </div>
+
+                 <div className="flex bg-black/20 dark:bg-slate-800/40 p-1.5 rounded-2xl mb-6 border border-white/5">
+                    <button 
+                       onClick={() => setPaymentMethod('wallet')}
+                       className={`flex-1 py-2.5 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${paymentMethod === 'wallet' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-400 hover:text-white'}`}
+                    >
+                       Wallet ($)
+                    </button>
+                    <button 
+                       onClick={() => setPaymentMethod('skill_exchange')}
+                       className={`flex-1 py-2.5 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${paymentMethod === 'skill_exchange' ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' : 'text-slate-400 hover:text-white'}`}
+                    >
+                       Barter Swap
+                    </button>
                  </div>
 
                  <motion.button 
