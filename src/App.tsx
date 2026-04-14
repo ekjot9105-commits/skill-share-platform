@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
@@ -12,7 +12,10 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { LandingPage } from './pages/Landing';
 import { WorkerDashboard } from './pages/WorkerDashboard';
+import { HowItWorks } from './pages/HowItWorks';
+import { Community } from './pages/Community';
 import { useAuthStore } from './store/useAuthStore';
+import { useThemeStore } from './store/useThemeStore';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -22,6 +25,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function App() {
+  const isDark = useThemeStore(state => state.isDark);
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -30,11 +43,11 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         
         <Route path="/" element={<Layout />}>
+          <Route path="how-it-works" element={<HowItWorks />} />
+          <Route path="community" element={<Community />} />
           <Route path="dashboard" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="search" element={<SearchPage />} />
           <Route path="worker/:id" element={<WorkerProfilePage />} />
-          
-          {/* Protected Routes */}
           <Route path="bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
           <Route path="messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />

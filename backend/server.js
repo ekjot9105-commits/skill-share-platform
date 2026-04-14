@@ -130,6 +130,31 @@ app.get('/api/workers', (req, res) => {
     });
 });
 
+// 3b. Get Single Worker Profile
+app.get('/api/workers/:id', (req, res) => {
+    const query = `
+        SELECT u.id, u.name, w.category, w.hourly_rate, w.experience_level, w.latitude, w.longitude, w.is_verified, w.avatar_url, w.video_url, w.bio,
+        COALESCE(AVG(r.rating), 0) as rating, COUNT(r.id) as reviewsCount,
+        (SELECT GROUP_CONCAT(skill) FROM worker_skills WHERE worker_id = u.id) as skills_list
+        FROM users u
+        JOIN workers w ON u.id = w.user_id
+        LEFT JOIN reviews r ON w.user_id = r.worker_id
+        WHERE u.id = ?
+        GROUP BY u.id
+    `;
+    db.get(query, [req.params.id], (err, worker) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!worker) return res.status(404).json({ error: 'Worker not found' });
+        
+        const workerWithSkills = {
+            ...worker,
+            skills: worker.skills_list ? worker.skills_list.split(',') : [],
+            distance: (Math.random() * 10).toFixed(1)
+        };
+        res.json(workerWithSkills);
+    });
+});
+
 // 4. Book a Worker
 app.post('/api/bookings', (req, res) => {
     const { client_id, worker_id, job_date, total_price, payment_method } = req.body;
@@ -274,7 +299,7 @@ app.post('/api/messages', upload.single('video'), (req, res) => {
     );
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
     console.log('SkillShare Backend running with WebSockets on port ' + PORT);
 });

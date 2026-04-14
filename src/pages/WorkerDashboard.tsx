@@ -100,7 +100,7 @@ export function WorkerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Profile Settings */}
-        <div className="md:col-span-1 bg-white p-6 rounded-3xl border shadow-sm flex flex-col gap-4">
+        <div className="md:col-span-1 bg-white dark:bg-surface-dark p-6 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col gap-4">
             <h2 className="text-xl font-bold flex items-center gap-2"><Settings className="w-5 h-5 text-primary" /> {t('Profile Settings')}</h2>
             {updateStatus && <div className="p-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-bold">{updateStatus}</div>}
             
@@ -140,7 +140,7 @@ export function WorkerDashboard() {
         </div>
 
         {/* Incoming Requests */}
-        <div className="md:col-span-2 bg-white p-6 rounded-3xl border shadow-sm flex flex-col gap-4 h-fit">
+        <div className="md:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col gap-4 h-fit">
             <h2 className="text-xl font-bold flex items-center gap-2"><Calendar className="w-5 h-5 text-primary" /> {t('Job Requests')}</h2>
             
             {bookings.length === 0 ? (

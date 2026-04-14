@@ -139,7 +139,7 @@ export function Messages() {
          <BackButton />
       </div>
       
-      <div className="flex-1 bg-white rounded-3xl border shadow-sm flex overflow-hidden">
+      <div className="flex-1 bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex overflow-hidden transition-all">
         
         {/* Left Pane: Contacts Sidebar */}
         <div className={`w-full md:w-80 border-r flex flex-col ${!showContacts ? 'hidden md:flex' : 'flex'}`}>

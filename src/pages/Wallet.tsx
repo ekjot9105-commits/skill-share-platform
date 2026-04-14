@@ -1,67 +1,93 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
+import { ArrowUpRight, ArrowDownLeft, Plus, History } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
-import { Plus } from 'lucide-react';
-import { BackButton } from '../components/BackButton';
+import { motion } from 'framer-motion';
+import { fadeInUp, staggerContainer, scaleOnHover } from '../utils/animations';
 
 export function Wallet() {
   const user = useAuthStore(state => state.user);
-  const updateWallet = useAuthStore(state => state.updateWallet);
-  const [loading, setLoading] = useState(false);
-  const [txHistory, setTxHistory] = useState<{title:string, date:string, amount:number, type:'add'|'sub'}[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
-  if (!user) return <div className="p-8 text-center text-primary font-bold">Please login</div>;
-
-  const handleTopUp = async () => {
-    setLoading(true);
-    try {
-        const amount = 50; // Mock fixed topup
-        await api.post('/wallet/topup', { user_id: user.id, amount });
-        updateWallet(user.wallet_balance + amount);
-        setTxHistory([{ title: 'Added Funds', date: new Date().toLocaleDateString(), amount, type: 'add' }, ...txHistory]);
-    } catch (err) {
-        console.error(err);
-    } finally {
-        setLoading(false);
-    }
-  };
+  useEffect(() => {
+    api.get('/wallet/transactions').then(res => setTransactions(res.data))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
 
   return (
-    <div className="p-4 md:p-8 max-w-md mx-auto">
-      <BackButton />
-      <h1 className="text-3xl font-extrabold mb-6 mt-4 text-center">Wallet</h1>
-      
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-        <p className="text-slate-300 font-medium mb-2 opacity-80">Current Balance</p>
-        <p className="text-5xl font-black mb-6">${user.wallet_balance.toFixed(2)}</p>
-        
-        <button 
-           onClick={handleTopUp}
-           disabled={loading}
-           className="bg-white text-slate-900 w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-100 transition shadow-md disabled:opacity-50"
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      variants={staggerContainer}
+      className="p-4 md:p-0 transition-colors duration-300"
+    >
+      <motion.h1 variants={fadeInUp()} className="text-3xl font-black mb-8 text-slate-900 dark:text-white">{t('Wallet')}</motion.h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Balance Card */}
+        <motion.div 
+          variants={fadeInUp(0.1)}
+          className="lg:col-span-1 bg-gradient-to-br from-primary to-blue-700 dark:from-primary-dark dark:to-blue-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[240px]"
         >
-          <Plus className="w-5 h-5"/> {loading ? 'Processing...' : 'Add $50 Funds'}
-        </button>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+          <div>
+            <p className="text-white/80 font-bold uppercase tracking-widest text-xs mb-2">Available Balance</p>
+            <h2 className="text-5xl font-black">${(user?.wallet_balance || 0).toFixed(2)}</h2>
+          </div>
+          <div className="flex gap-3">
+             <motion.button {...scaleOnHover} className="flex-1 bg-white/20 backdrop-blur-md py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/30 transition-colors">
+                <Plus className="w-5 h-5" /> Add Funds
+             </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Transactions List */}
+        <motion.div 
+          variants={fadeInUp(0.2)}
+          className="lg:col-span-2 bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col transition-all"
+        >
+          <div className="p-6 border-b dark:border-slate-800 flex items-center justify-between">
+            <h3 className="font-bold text-lg flex items-center gap-2 text-slate-900 dark:text-white"><History className="w-5 h-5 text-primary"/> Recent Transactions</h3>
+            <button className="text-primary dark:text-primary-dark font-bold text-sm">View All</button>
+          </div>
+          <div className="flex-1 overflow-y-auto max-h-[400px]">
+             {isLoading ? (
+                Array(4).fill(0).map((_, i) => (
+                   <div key={i} className="p-4 flex gap-4 border-b dark:border-slate-800 animate-pulse">
+                      <div className="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl"></div>
+                      <div className="flex-1 space-y-2 py-1">
+                         <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-1/2"></div>
+                         <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-1/4"></div>
+                      </div>
+                   </div>
+                ))
+             ) : transactions.length === 0 ? (
+                <div className="p-12 text-center text-slate-400 font-medium">No transactions found.</div>
+             ) : (
+                transactions.map((tx) => (
+                   <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b dark:border-slate-800 last:border-0 text-slate-900 dark:text-slate-100">
+                      <div className="flex items-center gap-4">
+                         <div className={`p-3 rounded-xl ${tx.type === 'credit' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
+                            {tx.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                         </div>
+                         <div>
+                            <p className="font-bold">{tx.description}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-500 font-medium">{new Date(tx.created_at).toLocaleDateString()}</p>
+                         </div>
+                      </div>
+                      <p className={`font-black text-lg ${tx.type === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                         {tx.type === 'credit' ? '+' : '-'}${tx.amount.toFixed(2)}
+                      </p>
+                   </div>
+                ))
+             )}
+          </div>
+        </motion.div>
       </div>
-      
-      <div className="mt-8">
-        <h3 className="font-bold text-lg mb-4 text-slate-900">Recent Transactions</h3>
-        <ul className="bg-white border rounded-2xl p-4 divide-y shadow-sm">
-          {txHistory.length === 0 && <li className="py-2 text-slate-500 text-sm">No new local session transactions</li>}
-          {txHistory.map((tx, i) => (
-             <li key={i} className="py-3 flex justify-between items-center text-sm">
-                <div>
-                  <p className="font-bold text-slate-900">{tx.title}</p>
-                  <p className="text-slate-500 font-medium">{tx.date}</p>
-                </div>
-                <span className={`${tx.type === 'add' ? 'text-green-600' : 'text-slate-900'} font-bold`}>
-                  {tx.type === 'add' ? '+' : '-'}${tx.amount.toFixed(2)}
-                </span>
-             </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    </motion.div>
   );
 }

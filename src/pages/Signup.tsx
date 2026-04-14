@@ -1,128 +1,137 @@
 import { useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
+import { Mail, Lock, User, Briefcase, ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
-import { BackButton } from '../components/BackButton';
+import { motion } from 'framer-motion';
+import { scaleOnHover } from '../utils/animations';
 
 export function Signup() {
-  const [searchParams] = useSearchParams();
-  const initRole = searchParams.get('role') === 'worker' ? 'worker' : 'client';
-  const [role, setRole] = useState<'client' | 'worker'>(initRole);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
-  // Worker specific
-  const [category, setCategory] = useState('Plumber');
-  const [hourlyRate, setHourlyRate] = useState(25);
-  const [experience, setExperience] = useState('Intermediate');
-  const [skills, setSkills] = useState('');
-  
+  const [params] = useSearchParams();
+  const [role, setRole] = useState(params.get('role') || 'client');
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const login = useAuthStore(state => state.login);
   const navigate = useNavigate();
+  const login = useAuthStore(state => state.login);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     setError('');
     try {
-      const payload: any = { name, email, password, role };
-      if (role === 'worker') {
-        payload.workerData = {
-          category,
-          hourly_rate: hourlyRate,
-          experience_level: experience,
-          latitude: (Math.random() * (40 - 30) + 30).toFixed(4), // Mock random location
-          longitude: (Math.random() * (-80 - -120) + -120).toFixed(4),
-          skills: skills.split(',').map(s => s.trim()),
-          bio: 'I am a highly motivated local worker looking to help you out.',
-        };
-      }
-      
-      const res = await api.post('/register', payload);
-      // Auto-login after signup
+      const res = await api.post('/register', { ...formData, role });
       login(res.data);
-      navigate(res.data.role === 'worker' ? '/worker-dashboard' : '/dashboard');
+      if (res.data.token) {
+        localStorage.setItem('skillshare_token', res.data.token);
+      }
+      navigate(role === 'worker' ? '/worker-dashboard' : '/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.response?.data?.error || err.response?.data?.message || err.message || 'Registration failed');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 md:p-8 bg-white rounded-3xl shadow-sm border mt-10 relative">
-      <div className="absolute top-4 left-4"><BackButton /></div>
-      <h1 className="text-3xl font-extrabold text-slate-900 mb-6 text-center mt-12">Join SkillShare</h1>
-      
-      {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm font-semibold">{error}</div>}
-      
-      <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
-        <button 
-          type="button"
-          disabled={isLoading}
-          className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${role === 'client' ? 'bg-white shadow text-primary' : 'text-slate-500'}`}
-          onClick={() => setRole('client')}
-        >
-          I want to hire
-        </button>
-        <button 
-           type="button"
-           disabled={isLoading}
-          className={`flex-1 py-3 text-sm font-bold rounded-lg transition-colors ${role === 'worker' ? 'bg-primary text-white shadow' : 'text-slate-500'}`}
-          onClick={() => setRole('worker')}
-        >
-          I want to work
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div><label className="block text-sm font-semibold text-slate-700 mb-1">Full Name</label><input type="text" className="w-full border bg-slate-50 p-3 rounded-xl disabled:opacity-50" value={name} onChange={e => setName(e.target.value)} required disabled={isLoading} /></div>
-        <div><label className="block text-sm font-semibold text-slate-700 mb-1">Email</label><input type="email" className="w-full border bg-slate-50 p-3 rounded-xl disabled:opacity-50" value={email} onChange={e => setEmail(e.target.value)} required disabled={isLoading} /></div>
-        <div><label className="block text-sm font-semibold text-slate-700 mb-1">Password</label><input type="password" className="w-full border bg-slate-50 p-3 rounded-xl disabled:opacity-50" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} disabled={isLoading} /></div>
+    <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col items-center justify-center p-6 transition-colors duration-500">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-xl"
+      >
+        <Link to="/" className="text-3xl font-black text-primary dark:text-primary-dark flex items-center justify-center gap-2 mb-12">
+          <span className="bg-primary dark:bg-primary-dark text-white p-1.5 rounded-xl">Sk</span>
+          SkillShare
+        </Link>
         
-        {role === 'worker' && (
-          <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex flex-col gap-4 mt-2">
-            <h3 className="font-bold text-primary mb-2">Worker Profile Creation</h3>
-            <div className="flex gap-4">
-              <div className="flex-1"><label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
-                <select className="w-full border bg-white p-3 rounded-xl disabled:opacity-50" value={category} onChange={e => setCategory(e.target.value)} disabled={isLoading}>
-                  <option>Plumber</option><option>Electrician</option><option>Tutor</option><option>Cleaner</option><option>Driver</option>
-                </select>
-              </div>
-              <div className="flex-1"><label className="block text-sm font-semibold text-slate-700 mb-1">Hourly Rate ($)</label>
-                <input type="number" className="w-full border bg-white p-3 rounded-xl disabled:opacity-50" value={hourlyRate} onChange={e => setHourlyRate(Number(e.target.value))} required disabled={isLoading} />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Skills (comma separated)</label>
-              <input type="text" placeholder="e.g. Pipe fitting, Drain cleaning" className="w-full border bg-white p-3 rounded-xl disabled:opacity-50" value={skills} onChange={e => setSkills(e.target.value)} required disabled={isLoading} />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Experience Level</label>
-              <select className="w-full border bg-white p-3 rounded-xl disabled:opacity-50" value={experience} onChange={e => setExperience(e.target.value)} disabled={isLoading}>
-                  <option>Beginner</option><option>Intermediate</option><option>Expert</option>
-              </select>
-            </div>
+        <div className="bg-white dark:bg-surface-dark p-8 md:p-12 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('Sign Up')}</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-2">Join our elite local community of skilled professionals</p>
           </div>
-        )}
 
-        <button 
-          type="submit" 
-          disabled={isLoading}
-          className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 transition shadow-md mt-4 flex items-center justify-center gap-2 disabled:opacity-70"
-        >
-          {isLoading ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              Creating Account...
-            </>
-          ) : 'Create Account'}
-        </button>
-      </form>
-      <p className="text-center mt-6 text-slate-600">Already joined? <Link to="/login" className="text-primary font-bold">Log in</Link></p>
+          <div className="flex p-2 bg-slate-100 dark:bg-slate-900 rounded-[2rem] mb-10 transition-colors">
+             <button 
+                onClick={() => setRole('client')}
+                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all ${role === 'client' ? 'bg-white dark:bg-surface-dark text-primary dark:text-primary-dark shadow-xl' : 'text-slate-500 hover:text-slate-700'}`}
+             >
+                <User className="w-4 h-4" /> {t('I want to hire')}
+                {role === 'client' && <Check className="w-4 h-4 text-primary" />}
+             </button>
+             <button 
+                onClick={() => setRole('worker')}
+                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all ${role === 'worker' ? 'bg-white dark:bg-surface-dark text-primary dark:text-primary-dark shadow-xl' : 'text-slate-500 hover:text-slate-700'}`}
+             >
+                <Briefcase className="w-4 h-4" /> {t('I want to work')}
+                {role === 'worker' && <Check className="w-4 h-4 text-primary" />}
+             </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-6">
+              <div className="space-y-1">
+                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Name')}</label>
+                 <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary" />
+                    <input 
+                      type="text" required
+                      className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-primary/20 rounded-2xl p-4 pl-12 font-bold text-slate-700 dark:text-slate-200 outline-none transition-all"
+                      placeholder="Your Full Name"
+                      onChange={e => setFormData({...formData, name: e.target.value})}
+                    />
+                 </div>
+              </div>
+
+              <div className="space-y-1">
+                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Email')}</label>
+                 <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary" />
+                    <input 
+                      type="email" required
+                      className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-primary/20 rounded-2xl p-4 pl-12 font-bold text-slate-700 dark:text-slate-200 outline-none transition-all"
+                      placeholder="name@example.com"
+                      onChange={e => setFormData({...formData, email: e.target.value})}
+                    />
+                 </div>
+              </div>
+
+              <div className="space-y-1">
+                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Password')}</label>
+                 <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary" />
+                    <input 
+                      type="password" required
+                      className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-primary/20 rounded-2xl p-4 pl-12 font-bold text-slate-700 dark:text-slate-200 outline-none transition-all"
+                      placeholder="••••••••"
+                      onChange={e => setFormData({...formData, password: e.target.value})}
+                    />
+                 </div>
+              </div>
+            </div>
+
+            {error && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-xs font-black uppercase text-center bg-red-50 py-2 rounded-lg">{error}</motion.p>}
+
+            <motion.button 
+              {...scaleOnHover}
+              disabled={loading}
+              className="w-full bg-primary dark:bg-primary-dark py-5 rounded-[1.5rem] text-white font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2 h-16"
+            >
+              {loading ? 'Creating Account...' : <>{t('Sign Up')} <ArrowRight className="w-5 h-5"/></>}
+            </motion.button>
+          </form>
+
+          <div className="mt-12 text-center text-slate-400 dark:text-slate-500 font-bold text-xs uppercase tracking-widest border-t dark:border-slate-800 pt-8">
+            Already have an account? <Link to="/login" className="text-primary dark:text-primary-dark ml-2 hover:underline">{t('Login')}</Link>
+          </div>
+        </div>
+
+        <div className="mt-10 flex items-center justify-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
+            <ShieldCheck className="w-4 h-4" /> Trusted Professional Network
+        </div>
+      </motion.div>
     </div>
   );
 }

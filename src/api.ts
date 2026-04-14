@@ -7,8 +7,8 @@ function normalizeBaseUrl(url: string): string {
 }
 
 const api = axios.create({
-    // Prioritize localhost for local development if VITE_API_BASE_URL is not set
-    baseURL: normalizeBaseUrl(configuredBaseUrl || 'http://localhost:3000/api'),
+    // Use env in all environments; fallback keeps local dev working and avoids localhost in deployed builds.
+    baseURL: normalizeBaseUrl(configuredBaseUrl || 'https://skill-share-platform.onrender.com/api'),
     headers: {
         'Content-Type': 'application/json'
     }

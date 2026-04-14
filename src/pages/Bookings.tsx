@@ -51,14 +51,14 @@ export function Bookings() {
       <h1 className="text-3xl font-extrabold mb-6 mt-4">Your Bookings & Tracking</h1>
       
       {bookings.length === 0 ? (
-          <div className="bg-white rounded-3xl border shadow-sm p-6 text-center text-slate-500 py-12">
+          <div className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 text-center text-slate-500 py-12">
             <h2 className="text-xl font-bold text-slate-900 mb-2">No active bookings</h2>
             <p>You haven't booked any workers yet.</p>
           </div>
       ) : (
           <div className="flex flex-col gap-6">
               {bookings.map(b => (
-                  <div key={b.id} className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div key={b.id} className="bg-white dark:bg-surface-dark p-6 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
                      <div className="flex-1 w-full">
                          <div className="flex justify-between items-center w-full mb-2">
                              <h3 className="font-bold text-xl text-slate-900">{b.worker_name}</h3>

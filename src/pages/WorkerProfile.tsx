@@ -1,243 +1,189 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Star, MapPin, CheckCircle, Video } from 'lucide-react';
-import api from '../api';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { BackButton } from '../components/BackButton';
-import type { WorkerProfile, Review } from '../types';
+import { Star, MapPin, Calendar, MessageSquare, ShieldCheck, ArrowLeft, Heart, Share2, Award, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import api from '../api';
+import type { WorkerProfile } from '../types';
+import { motion } from 'framer-motion';
+import { fadeInUp, staggerContainer, scaleOnHover } from '../utils/animations';
 
 export function WorkerProfilePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [worker, setWorker] = useState<WorkerProfile | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bookingDate, setBookingDate] = useState('');
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const { t } = useTranslation();
   const user = useAuthStore(state => state.user);
-  const updateWallet = useAuthStore(state => state.updateWallet);
-  const [isBooking, setIsBooking] = useState(false);
-  const [bookError, setBookError] = useState('');
-  const [bookSuccess, setBookSuccess] = useState('');
-  
-  const [jobDate, setJobDate] = useState(() => {
-     const d = new Date();
-     d.setHours(d.getHours() + 1);
-     return d.toISOString().slice(0, 16);
-  });
-  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'skill_exchange'>('wallet');
 
   useEffect(() => {
-    // We fetch all workers and find him because our simple sqlite backend returns a list
-    api.get('/workers').then(res => {
-      const found = res.data.find((w: any) => w.id === Number(id));
-      if (found) setWorker(found);
-    }).catch(console.error);
-
-    // Fetch reviews (mocked as empty array initially in our DB if we didn't write an endpoint)
-    // Actually our DB has no review GET endpoint, so we will just show empty for now, 
-    // but we can simulate fetching.
-    setReviews([]);
+    api.get(`/workers/${id}`).then(res => setWorker(res.data))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [id]);
 
   const handleBook = async () => {
-     if (!user) {
-         setBookError('Please login first to book a worker.');
-         return;
-     }
-     if (!worker) return;
-
-     setIsBooking(true);
-     setBookError('');
-     
-     try {
-         const res = await api.post('/bookings', {
-             client_id: user.id,
-             worker_id: worker.id,
-             job_date: jobDate,
-             total_price: worker.hourly_rate * 2, // Minimum 2 hours
-             payment_method: paymentMethod
-         });
-         
-         if (res.data.new_balance !== null) {
-             updateWallet(res.data.new_balance);
-         }
-         setBookSuccess('Successfully booked! Wait for confirmation.');
-     } catch (err: any) {
-         setBookError(err.response?.data?.error || 'Booking failed');
-     } finally {
-         setIsBooking(false);
-     }
+    if (!bookingDate) return alert('Select a date');
+    setBookingLoading(true);
+    try {
+      if (!user) return alert('You must be logged in to book.');
+      await api.post('/bookings', { 
+        client_id: user.id, 
+        worker_id: id, 
+        job_date: bookingDate,
+        total_price: worker?.hourly_rate || 0,
+        payment_method: 'wallet' 
+      });
+      alert('Booking requested successfully!');
+      navigate('/bookings');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
-  if (!worker) {
-    return <div className="p-8 text-center flex flex-col justify-center items-center gap-4"><BackButton /><h2 className="text-2xl font-bold">Loading Worker...</h2></div>;
-  }
+  if (isLoading) return (
+    <div className="max-w-6xl mx-auto p-4 animate-pulse">
+       <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded-3xl mb-8"></div>
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2 h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl"></div>
+          <div className="h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl"></div>
+       </div>
+    </div>
+  );
+  if (!worker) return <div className="p-12 text-center font-bold text-slate-500">Worker not found</div>;
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-8 max-w-4xl mx-auto">
-      <BackButton />
-      {/* Header Profile Section */}
-      <section className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border relative overflow-hidden flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-        <img src={worker.avatar_url || 'https://i.pravatar.cc/200?u='+worker.id} alt={worker.name} className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover border-4 border-slate-50 shadow-lg" />
-        <div className="flex-1">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-2 justify-center md:justify-start">
-                {worker.name}
-                {Boolean(worker.is_verified) && <CheckCircle className="w-6 h-6 text-blue-500" />}
-              </h1>
-              <p className="text-lg text-slate-600 font-medium">{worker.category} • {worker.experience_level}</p>
-            </div>
-            <div className="text-center bg-slate-50 p-3 rounded-2xl border min-w-[120px]">
-              <p className="text-3xl font-black text-slate-900">${worker.hourly_rate}</p>
-              <p className="text-sm font-medium text-slate-500">per hour</p>
-            </div>
-          </div>
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      variants={staggerContainer}
+      className="max-w-6xl mx-auto p-4 md:p-0 transition-colors duration-300"
+    >
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 hover:text-primary mb-6 font-bold transition-colors">
+        <ArrowLeft className="w-5 h-5" /> {t('Back')}
+      </button>
 
-          <div className="flex items-center gap-6 mt-6 justify-center md:justify-start text-slate-700">
-            <span className="flex items-center gap-1.5 font-bold">
-              <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-              {worker.rating} <span className="text-slate-400 font-normal">({worker.reviewsCount} reviews)</span>
-            </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <MapPin className="w-5 h-5 text-slate-400" />
-              Local
-            </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-xl">🗣️</span> English, Spanish
-            </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-xl">⚡</span> 1hr Response
-            </span>
-          </div>
-          
-          <div className="mt-6 flex flex-wrap gap-2 justify-center md:justify-start">
-            {worker.skills?.map((skill) => (
-              <span key={skill} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About & Video Demo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 flex flex-col gap-6">
-          <section className="bg-white p-6 rounded-3xl border shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">About Me</h2>
-            <p className="text-slate-600 leading-relaxed">{worker.bio}</p>
-          </section>
-
-          {/* Portfolio Mocks */}
-          <section className="bg-white p-6 rounded-3xl border shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Portfolio Work</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-               <img src={`https://images.unsplash.com/photo-1581092918056-0c4c3cb377fa?w=300&h=300&fit=crop&random=${worker.id}1`} alt="Work sample" className="w-full aspect-square object-cover rounded-xl hover:scale-105 transition-transform" />
-               <img src={`https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=300&h=300&fit=crop&random=${worker.id}2`} alt="Work sample 2" className="w-full aspect-square object-cover rounded-xl hover:scale-105 transition-transform" />
-               <img src={`https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&h=300&fit=crop&random=${worker.id}3`} alt="Work sample 3" className="w-full aspect-square object-cover rounded-xl hover:scale-105 transition-transform" />
-            </div>
-          </section>
-
-          {worker.video_url && (
-            <section className="bg-white p-6 rounded-3xl border shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Video className="w-5 h-5 text-red-500" /> Video Profile Demo
-              </h2>
-              <div className="aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-inner">
-                <video controls className="w-full h-full object-cover">
-                  <source src={worker.video_url} type="video/mp4" />
-                </video>
-              </div>
-            </section>
-          )}
-
-          {/* Reviews */}
-          <section className="bg-white p-6 rounded-3xl border shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Reviews</h2>
-            <div className="flex flex-col gap-4">
-              {reviews.map(review => (
-                <div key={review.id} className="border-b last:border-0 pb-4 last:pb-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-slate-900">User {review.client_id}</span>
-                    <span className="text-xs text-slate-500">{new Date(review.timestamp).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`} />
-                    ))}
-                  </div>
-                  <p className="text-sm text-slate-600">{review.comment}</p>
-                </div>
-              ))}
-              {reviews.length === 0 && (
-                <p className="text-slate-500 italic text-sm">No reviews yet for this worker.</p>
-              )}
-            </div>
-          </section>
-        </div>
-
-        {/* Booking Sidebar */}
-        <div className="flex flex-col gap-4">
-          <section className="bg-white p-6 rounded-3xl border shadow-sm sticky top-24">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Book Now</h2>
-            
-            {bookSuccess && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center flex flex-col items-center gap-4 transform scale-100 animate-bounce-in">
-                        <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-2">
-                            <CheckCircle className="w-10 h-10 animate-pulse" />
-                        </div>
-                        <h2 className="text-2xl font-black text-slate-900">Booking Confirmed!</h2>
-                        <p className="text-slate-500 font-medium">{bookSuccess}</p>
-                        <Link to="/bookings" className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl mt-4 hover:bg-slate-800 transition">
-                            View My Bookings
-                        </Link>
-                        <button onClick={() => setBookSuccess('')} className="text-slate-400 font-bold text-sm mt-2">Dismiss</button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-8">
+           {/* Profile Header */}
+           <motion.div variants={fadeInUp()} className="bg-white dark:bg-surface-dark p-6 md:p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start relative z-10">
+                 <img src={worker.avatar_url || 'https://i.pravatar.cc/150'} alt={worker.name} className="w-40 h-40 rounded-[2.5rem] object-cover border-4 border-white dark:border-slate-800 shadow-xl" />
+                 <div className="flex-1 text-center md:text-left">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                       <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{worker.name}</h1>
+                       {worker.is_verified && (
+                         <span className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-black px-3 py-1 rounded-full uppercase">
+                           <ShieldCheck className="w-3 h-3" /> Verified
+                         </span>
+                       )}
                     </div>
-                </div>
-            )}
-            
-            <div className="flex flex-col gap-3 mb-4">
-                <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Date & Time</label>
-                    <input 
-                        type="datetime-local" 
-                        value={jobDate}
-                        onChange={e => setJobDate(e.target.value)}
-                        className="w-full border bg-slate-50 p-3 rounded-xl focus:ring-primary outline-none"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Payment Method</label>
-                    <select 
-                        value={paymentMethod}
-                        onChange={e => setPaymentMethod(e.target.value as 'wallet' | 'skill_exchange')}
-                        className="w-full border bg-slate-50 p-3 rounded-xl focus:ring-primary outline-none"
-                    >
-                        <option value="wallet">Pay with Wallet (${worker.hourly_rate * 2})</option>
-                        <option value="skill_exchange">Skill Exchange (Barter)</option>
-                    </select>
-                </div>
-            </div>
-            {bookError && <p className="text-red-500 text-sm mb-3 font-semibold">{bookError}</p>}
-            
-            <button 
-                onClick={handleBook}
-                disabled={isBooking}
-                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl hover:bg-primary/90 transition shadow-md flex items-center justify-center gap-2 disabled:opacity-50 hover:-translate-y-1"
-            >
-            {isBooking ? 'Processing...' : (paymentMethod === 'skill_exchange' ? 'Request Exchange' : `Book for $${worker.hourly_rate * 2}`)}
-            </button>
-            {!user && <p className="text-xs text-red-500 text-center mt-3 font-bold">You must be logged in to book.</p>}
-            {user && paymentMethod === 'wallet' && <p className="text-xs text-slate-500 text-center mt-3 font-medium">Current Balance: ${user.wallet_balance?.toFixed(2)}</p>}
-            
-            {/* Added Message Button for Realtime feature */}
-            {user && (
-                 <Link to={`/messages?user_id=${worker.user_id || worker.id}`} className="mt-4 w-full bg-white border-2 border-slate-200 text-slate-800 font-bold text-sm py-3 rounded-xl hover:bg-slate-50 transition flex items-center justify-center">
-                    Message {worker.name.split(' ')[0]}
-                 </Link>
-            )}
-          </section>
+                    <p className="text-xl font-bold text-primary dark:text-primary-dark mb-4">{worker.category} • {worker.experience_level}</p>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-slate-600 dark:text-slate-400 font-bold">
+                       <span className="flex items-center gap-2"><Star className="w-5 h-5 text-amber-500 fill-amber-500" /> {Number(worker.rating).toFixed(1)} ({worker.reviewsCount} {t('Reviews')})</span>
+                       <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-slate-400" /> {worker.distance} km away</span>
+                    </div>
+                 </div>
+              </div>
+           </motion.div>
+
+           {/* About & Skills */}
+           <motion.div variants={fadeInUp(0.1)} className="bg-white dark:bg-surface-dark p-8 md:p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">About Professional</h2>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg mb-8">
+                 {worker.bio || "Professional worker with extensive experience in providing high-quality services to the local community. Dedicated to excellence and customer satisfaction."}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div>
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Core Expertise</h3>
+                    <div className="flex flex-wrap gap-2">
+                       {worker.skills?.map(skill => (
+                          <span key={skill} className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl font-bold text-sm transition-colors">{skill}</span>
+                       ))}
+                    </div>
+                 </div>
+                 <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                       <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-600"><Award className="w-5 h-5" /></div>
+                       <p className="font-bold text-slate-700 dark:text-slate-300">Top Rated Elite Worker</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                       <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600"><Zap className="w-5 h-5" /></div>
+                       <p className="font-bold text-slate-700 dark:text-slate-300">Fast Response (under 10m)</p>
+                    </div>
+                 </div>
+              </div>
+           </motion.div>
         </div>
+
+        {/* Sidebar: Booking Card */}
+        <aside className="space-y-6 lg:sticky lg:top-24">
+           <motion.div variants={fadeInUp(0.2)} className="bg-slate-900 dark:bg-surface-dark rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
+              <div className="relative z-10">
+                 <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <p className="text-white/60 font-black uppercase tracking-widest text-[10px] mb-1">Hourly Rate</p>
+                        <p className="text-4xl font-black">${worker.hourly_rate}<span className="text-lg opacity-60">/hr</span></p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-white/60 font-black uppercase tracking-widest text-[10px] mb-1">Availability</p>
+                        <p className="text-green-400 font-black">Mon - Sat</p>
+                    </div>
+                 </div>
+
+                 <div className="space-y-4 mb-8">
+                    <div className="bg-white/10 dark:bg-slate-800/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                       <label className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2 block">Scheduled For</label>
+                       <input 
+                         type="datetime-local" 
+                         value={bookingDate}
+                         onChange={e => setBookingDate(e.target.value)}
+                         className="w-full bg-transparent font-bold text-white outline-none caret-primary" 
+                       />
+                    </div>
+                 </div>
+
+                 <motion.button 
+                   {...scaleOnHover}
+                   onClick={handleBook}
+                   disabled={bookingLoading}
+                   className="w-full bg-primary py-4 rounded-2xl font-black text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
+                 >
+                    {bookingLoading ? 'Processing...' : (
+                      <><Calendar className="w-5 h-5" /> Book Service Now</>
+                    )}
+                 </motion.button>
+                 
+                 <motion.button 
+                   {...scaleOnHover}
+                   onClick={() => navigate('/messages')}
+                   className="w-full bg-white/10 border border-white/20 py-4 rounded-2xl font-black text-white hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                 >
+                    <MessageSquare className="w-5 h-5" /> Send Message
+                 </motion.button>
+              </div>
+           </motion.div>
+
+           <motion.div variants={fadeInUp(0.3)} className="bg-white dark:bg-surface-dark p-6 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex justify-around">
+              <button className="flex flex-col items-center gap-2 text-slate-400 hover:text-red-500 transition-colors">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-full"><Heart className="w-5 h-5" /></div>
+                <span className="text-[10px] font-black uppercase tracking-widest">Save</span>
+              </button>
+              <button className="flex flex-col items-center gap-2 text-slate-400 hover:text-primary transition-colors">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-full"><Share2 className="w-5 h-5" /></div>
+                <span className="text-[10px] font-black uppercase tracking-widest">Share</span>
+              </button>
+           </motion.div>
+        </aside>
       </div>
-    </div>
+    </motion.div>
   );
 }

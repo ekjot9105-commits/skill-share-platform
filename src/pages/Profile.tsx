@@ -35,17 +35,17 @@ export function Profile() {
           <div className="absolute top-0 right-0 md:hidden"><BackButton /></div>
           <h1 className="text-3xl font-extrabold text-slate-900 mb-4">{t('Profile')} Settings</h1>
           
-          <button onClick={() => setActiveTab('profile')} className={`flex items-center justify-between p-4 rounded-2xl transition font-bold ${activeTab === 'profile' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border'}`}>
+          <button onClick={() => setActiveTab('profile')} className={`flex items-center justify-between p-4 rounded-2xl transition-all font-bold ${activeTab === 'profile' ? 'bg-primary text-white shadow-[0_4px_20px_-5px_rgba(245,158,11,0.4)]' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.02)]'}`}>
               <span className="flex items-center gap-3"><User className="w-5 h-5"/> Account Info</span>
               <ChevronRight className={`w-4 h-4 ${activeTab === 'profile' ? 'text-white' : 'text-slate-400'}`}/>
           </button>
           
-          <button onClick={() => setActiveTab('saved')} className={`flex items-center justify-between p-4 rounded-2xl transition font-bold ${activeTab === 'saved' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border'}`}>
+          <button onClick={() => setActiveTab('saved')} className={`flex items-center justify-between p-4 rounded-2xl transition-all font-bold ${activeTab === 'saved' ? 'bg-primary text-white shadow-[0_4px_20px_-5px_rgba(245,158,11,0.4)]' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.02)]'}`}>
               <span className="flex items-center gap-3"><Heart className="w-5 h-5"/> Saved Workers</span>
               <ChevronRight className={`w-4 h-4 ${activeTab === 'saved' ? 'text-white' : 'text-slate-400'}`}/>
           </button>
 
-          <button onClick={() => setActiveTab('notifications')} className={`flex items-center justify-between p-4 rounded-2xl transition font-bold ${activeTab === 'notifications' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border'}`}>
+          <button onClick={() => setActiveTab('notifications')} className={`flex items-center justify-between p-4 rounded-2xl transition-all font-bold ${activeTab === 'notifications' ? 'bg-primary text-white shadow-[0_4px_20px_-5px_rgba(245,158,11,0.4)]' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.02)]'}`}>
               <span className="flex items-center gap-3"><Bell className="w-5 h-5"/> Notifications</span>
               <ChevronRight className={`w-4 h-4 ${activeTab === 'notifications' ? 'text-white' : 'text-slate-400'}`}/>
           </button>
@@ -58,7 +58,7 @@ export function Profile() {
       {/* Main Content Area */}
       <div className="flex-1">
           {activeTab === 'profile' && (
-              <div className="bg-white rounded-3xl border shadow-sm p-6 lg:p-8 animate-fade-in">
+              <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Settings className="w-6 h-6 text-primary"/> General Settings</h2>
                   
                   <div className="flex items-center gap-6 mb-8 pb-8 border-b">
@@ -98,7 +98,7 @@ export function Profile() {
           )}
 
           {activeTab === 'saved' && (
-              <div className="bg-white rounded-3xl border shadow-sm p-6 lg:p-8 animate-fade-in">
+              <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Heart className="w-6 h-6 text-pink-500"/> Saved Workers</h2>
                   <div className="bg-pink-50 rounded-2xl p-6 text-center border-2 border-dashed border-pink-200">
                       <Heart className="w-12 h-12 text-pink-300 mx-auto mb-3" />
@@ -110,7 +110,7 @@ export function Profile() {
           )}
 
           {activeTab === 'notifications' && (
-              <div className="bg-white rounded-3xl border shadow-sm p-6 lg:p-8 animate-fade-in">
+              <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Bell className="w-6 h-6 text-amber-500"/> Notification Preferences</h2>
                   <div className="space-y-6">
                       <div className="flex items-center justify-between border-b pb-4">
