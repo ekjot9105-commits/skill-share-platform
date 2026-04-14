@@ -19,7 +19,7 @@ export function LandingPage() {
 
        {/* Custom Navbar for Landing Page */}
        <header className="relative z-50 flex items-center justify-between px-8 py-5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-slate-900 dark:text-white transition-colors">
              <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
              <span className="text-2xl font-black tracking-tight">SkillBridge</span>
           </div>
@@ -42,8 +42,8 @@ export function LandingPage() {
           </div>
 
           <div className="flex items-center gap-3">
-             <Link to="/login" className="px-6 py-2.5 rounded-full border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition drop-shadow-sm bg-white">Log In</Link>
-             <Link to="/signup" className="px-6 py-2.5 rounded-full bg-[#1e293b] text-white text-sm font-bold hover:bg-slate-800 transition shadow-md">Get Started</Link>
+             <Link to="/login" className="px-6 py-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition drop-shadow-sm bg-white dark:bg-surface-dark">Log In</Link>
+             <Link to="/signup" className="px-6 py-2.5 rounded-full bg-[#1e293b] dark:bg-primary-dark text-white text-sm font-bold hover:bg-slate-800 dark:hover:opacity-90 transition shadow-md">Get Started</Link>
           </div>
        </header>
 

@@ -58,7 +58,7 @@ export function Home() {
       {/* Hero Section */}
       <motion.section 
         variants={fadeInUp()}
-        className="bg-slate-900 dark:bg-surface-dark text-white rounded-3xl p-6 md:p-12 shadow-2xl mt-0 flex flex-col items-center text-center gap-6 relative overflow-hidden transition-colors"
+        className="bg-slate-900 dark:bg-slate-900/50 backdrop-blur-sm text-white rounded-[2.5rem] p-6 md:p-12 shadow-2xl mt-0 flex flex-col items-center text-center gap-6 relative overflow-hidden transition-all duration-500 border border-white/5"
       >
         {/* Background Image Setup */}
         <div className="absolute inset-0 z-0">
@@ -110,7 +110,7 @@ export function Home() {
                 value={aiPrompt}
                 onChange={e => setAiPrompt(e.target.value)}
                 placeholder="e.g. My sink is leaking water everywhere and I need it fixed fast..."
-                className="flex-1 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 bg-white dark:bg-surface-dark focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-600 transition-colors text-slate-900 dark:text-slate-100"
+                className="flex-1 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-900/50 bg-white dark:bg-slate-900 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-600 transition-colors text-slate-900 dark:text-slate-100"
             />
             <button 
                 type="submit" 
@@ -168,7 +168,7 @@ export function Home() {
         {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map(i => (
-                    <div key={i} className="bg-white dark:bg-surface-dark rounded-2xl border dark:border-slate-800 p-4 flex flex-col h-48 animate-pulse">
+                    <div key={i} className="bg-white dark:bg-surface-dark rounded-2xl border dark:border-white/5 p-4 flex flex-col h-48 animate-pulse">
                         <div className="flex gap-4">
                             <div className="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700"></div>
                             <div className="flex-[1] space-y-3 py-1">
