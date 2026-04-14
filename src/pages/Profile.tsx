@@ -33,7 +33,7 @@ export function Profile() {
       {/* Sidebar Navigation */}
       <div className="w-full md:w-64 flex flex-col gap-2 relative">
           <div className="absolute top-0 right-0 md:hidden"><BackButton /></div>
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-4">{t('Profile')} Settings</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4">{t('Profile')} Settings</h1>
           
           <button onClick={() => setActiveTab('profile')} className={`flex items-center justify-between p-4 rounded-2xl transition-all font-bold ${activeTab === 'profile' ? 'bg-primary text-white shadow-[0_4px_20px_-5px_rgba(245,158,11,0.4)]' : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.02)]'}`}>
               <span className="flex items-center gap-3"><User className="w-5 h-5"/> Account Info</span>
@@ -59,7 +59,7 @@ export function Profile() {
       <div className="flex-1">
           {activeTab === 'profile' && (
               <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Settings className="w-6 h-6 text-primary"/> General Settings</h2>
+                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white"><Settings className="w-6 h-6 text-primary"/> General Settings</h2>
                   
                   <div className="flex items-center gap-6 mb-8 pb-8 border-b">
                      <div className="relative group cursor-pointer">
@@ -69,7 +69,7 @@ export function Profile() {
                          <div className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full shadow-md"><Camera className="w-4 h-4"/></div>
                      </div>
                      <div>
-                         <p className="font-bold text-lg text-slate-900">{user.email}</p>
+                         <p className="font-bold text-lg text-slate-900 dark:text-white">{user.email}</p>
                          <p className="text-slate-500 font-medium uppercase text-xs tracking-wider bg-slate-100 inline-block px-2 py-1 rounded mt-1">{user.role}</p>
                      </div>
                   </div>
@@ -99,7 +99,7 @@ export function Profile() {
 
           {activeTab === 'saved' && (
               <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Heart className="w-6 h-6 text-pink-500"/> Saved Workers</h2>
+                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white"><Heart className="w-6 h-6 text-pink-500"/> Saved Workers</h2>
                   <div className="bg-pink-50 rounded-2xl p-6 text-center border-2 border-dashed border-pink-200">
                       <Heart className="w-12 h-12 text-pink-300 mx-auto mb-3" />
                       <h3 className="font-bold text-pink-900 mb-1">No saved workers yet</h3>
@@ -111,7 +111,7 @@ export function Profile() {
 
           {activeTab === 'notifications' && (
               <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 lg:p-8 animate-fade-in transition-all">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Bell className="w-6 h-6 text-amber-500"/> Notification Preferences</h2>
+                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white"><Bell className="w-6 h-6 text-amber-500"/> Notification Preferences</h2>
                   <div className="space-y-6">
                       <div className="flex items-center justify-between border-b pb-4">
                           <div>

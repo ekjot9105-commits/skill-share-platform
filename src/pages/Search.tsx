@@ -5,6 +5,7 @@ import api from '../api';
 import type { WorkerProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Globe, RefreshCcw } from 'lucide-react';
+import { BackButton } from '../components/BackButton';
 
 export function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -50,20 +51,21 @@ export function SearchPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#fffcf8] transition-colors duration-300 pb-20">
+    <div className="min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300 pb-20">
       
       {/* Top White Header Section */}
-      <div className="bg-[#fffcf8] px-4 md:px-12 pt-8 pb-10">
+      <div className="bg-[#fffcf8] dark:bg-background-dark px-4 md:px-12 pt-8 pb-10 transition-colors">
+        <div className="mb-6"><BackButton /></div>
         <div className="flex items-center justify-between mb-10">
-           <Link to="/" className="text-xl font-bold flex items-center gap-2 text-slate-900">
+           <Link to="/" className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
              <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
              SkillBridge
            </Link>
            <nav className="hidden md:flex gap-8 text-sm font-semibold text-slate-600">
-             <Link to="/" className="hover:text-slate-900 transition">How it Works</Link>
-             <Link to="/search" className="text-slate-900 border-b-2 border-slate-900 pb-1">Explore</Link>
-             <Link to="/search" className="hover:text-slate-900 transition">Barter</Link>
-             <Link to="/" className="hover:text-slate-900 transition">Community</Link>
+             <Link to="/" className="hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition">How it Works</Link>
+             <Link to="/search" className="text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white pb-1">Explore</Link>
+             <Link to="/search" className="hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition">Barter</Link>
+             <Link to="/" className="hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition">Community</Link>
            </nav>
            <div className="flex gap-4">
               <Link to="/login" className="px-5 py-2.5 text-sm font-bold border border-slate-200 rounded-lg hover:bg-slate-50 transition drop-shadow-sm bg-white text-slate-700">Log In</Link>
@@ -73,11 +75,11 @@ export function SearchPage() {
 
         {/* Search Bar Wrapper */}
         <div className="max-w-3xl mx-auto flex flex-col items-center">
-            <div className="w-full bg-white flex items-center rounded-2xl p-2 border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]">
+            <div className="w-full bg-white dark:bg-surface-dark flex items-center rounded-2xl p-2 border border-slate-100 dark:border-slate-800 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]">
                <input 
                  type="text" 
                  placeholder="Search skills, topics, people..." 
-                 className="flex-1 px-4 py-3 outline-none text-slate-800 font-medium placeholder-slate-400"
+                 className="flex-1 bg-transparent px-4 py-3 outline-none text-slate-800 dark:text-white font-medium placeholder-slate-400"
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
                />
@@ -128,7 +130,7 @@ export function SearchPage() {
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
                     key={worker.id}
                   >
-                    <Link to={`/worker/${worker.id}`} className="block group bg-white rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.06)] hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
+                    <Link to={`/worker/${worker.id}`} className="block group bg-white dark:bg-surface-dark rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.06)] hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
                        
                        {/* Top Vibrant Half */}
                        <div className={`${style.bg} h-48 flex items-center justify-center relative overflow-hidden transition-colors`}>
@@ -149,7 +151,7 @@ export function SearchPage() {
                              )}
                           </div>
 
-                          <h3 className="text-xl font-black text-slate-900 mb-2 leading-tight group-hover:text-amber-500 transition-colors line-clamp-1">{worker.category}</h3>
+                          <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight group-hover:text-amber-500 transition-colors line-clamp-1">{worker.category}</h3>
                           
                           <p className="text-sm font-medium text-slate-500 leading-relaxed mb-6 line-clamp-2 flex-1">
                              {worker.bio || `Build modern capabilities inside of the ${worker.category} field. From concept to deployment with best practices.`}
@@ -157,7 +159,7 @@ export function SearchPage() {
 
                           {/* Footer */}
                           <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-                              <p className="font-extrabold text-slate-800 text-lg">
+                              <p className="font-extrabold text-slate-800 dark:text-white text-lg">
                                 {isBarter ? (
                                   <span className="flex items-center gap-1.5 text-sm text-blue-600"><RefreshCcw className="w-4 h-4"/> Swap offer</span>
                                 ) : (

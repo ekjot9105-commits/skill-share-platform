@@ -52,7 +52,7 @@ export function Bookings() {
       
       {bookings.length === 0 ? (
           <div className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 text-center text-slate-500 py-12">
-            <h2 className="text-xl font-bold text-slate-900 mb-2">No active bookings</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No active bookings</h2>
             <p>You haven't booked any workers yet.</p>
           </div>
       ) : (
@@ -61,7 +61,7 @@ export function Bookings() {
                   <div key={b.id} className="bg-white dark:bg-surface-dark p-6 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
                      <div className="flex-1 w-full">
                          <div className="flex justify-between items-center w-full mb-2">
-                             <h3 className="font-bold text-xl text-slate-900">{b.worker_name}</h3>
+                             <h3 className="font-bold text-xl text-slate-900 dark:text-white">{b.worker_name}</h3>
                              <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase ${b.status === 'pending' ? 'bg-amber-100 text-amber-700' : b.status === 'completed' ? 'bg-blue-100 text-blue-700' : b.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                                 {b.status}
                              </span>
@@ -71,9 +71,9 @@ export function Bookings() {
                      </div>
                      <div className="text-left md:text-right w-full md:w-auto bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-xl border md:border-0 border-slate-200">
                          {b.payment_method === 'skill_exchange' ? (
-                             <p className="font-black text-purple-700 uppercase">Skill Exchange</p>
+                             <p className="font-black text-purple-700 dark:text-purple-400 uppercase">Skill Exchange</p>
                          ) : (
-                             <p className="font-black text-2xl text-slate-900">${b.total_price}</p>
+                             <p className="font-black text-2xl text-slate-900 dark:text-white">${b.total_price}</p>
                          )}
                          {b.status === 'completed' && reviewingId !== b.id && (
                              <button onClick={() => setReviewingId(b.id)} className="mt-3 text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 w-full md:w-auto">

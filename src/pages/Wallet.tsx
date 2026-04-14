@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { ArrowUpRight, ArrowDownLeft, Plus, History } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../api';
+import { BackButton } from '../components/BackButton';
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer, scaleOnHover } from '../utils/animations';
 
@@ -23,8 +24,9 @@ export function Wallet() {
       initial="initial"
       animate="animate"
       variants={staggerContainer}
-      className="p-4 md:p-0 transition-colors duration-300"
+      className="p-4 md:p-0 transition-colors duration-300 relative"
     >
+      <div className="mb-4"><BackButton /></div>
       <motion.h1 variants={fadeInUp()} className="text-3xl font-black mb-8 text-slate-900 dark:text-white">{t('Wallet')}</motion.h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

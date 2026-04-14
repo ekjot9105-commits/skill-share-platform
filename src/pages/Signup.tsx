@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../api';
 import { motion } from 'framer-motion';
 import { scaleOnHover } from '../utils/animations';
+import { BackButton } from '../components/BackButton';
 
 export function Signup() {
   const [params] = useSearchParams();
@@ -40,8 +41,9 @@ export function Signup() {
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xl"
+        className="w-full max-w-xl relative"
       >
+        <div className="absolute top-0 left-0"><BackButton /></div>
         <Link to="/" className="text-3xl font-black text-primary dark:text-primary-dark flex items-center justify-center gap-2 mb-12">
           <span className="bg-primary dark:bg-primary-dark text-white p-1.5 rounded-xl">Sk</span>
           SkillShare

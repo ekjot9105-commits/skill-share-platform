@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import api from '../api';
+import { BackButton } from '../components/BackButton';
 import { CheckCircle, XCircle, Settings, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DollarSign, Briefcase, Star as StarIcon } from 'lucide-react';
