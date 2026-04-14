@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+
 import api from '../api';
 import type { WorkerProfile } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Laptop, Palette, Music, Utensils, Mic, Camera, Globe, RefreshCcw, HandCoins } from 'lucide-react';
+import { MapPin, Globe, RefreshCcw } from 'lucide-react';
 
 export function SearchPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const q = searchParams.get('q') || '';
   const [workers, setWorkers] = useState<WorkerProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(q || '');
   const [activeFilter, setActiveFilter] = useState('All'); // All, Money, Barter, Local, Online
-  const { t } = useTranslation();
+
 
   useEffect(() => {
     fetchWorkers();

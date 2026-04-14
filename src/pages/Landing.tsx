@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Globe, Plus, Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 export function LandingPage() {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
+
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

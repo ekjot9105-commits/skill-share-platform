@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+
 import { Users, MessagesSquare, Award } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 
 export function Community() {
-  const { t } = useTranslation();
+
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-12 mb-20 animate-fade-in relative z-10">
